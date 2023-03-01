@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
     int m = stoi(argv[4]);
 
     if(rank==0){
-        string mesh = "Freefem++ -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
+        string mesh = "FreeFem++ -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
         system(mesh.c_str()); // creating new mesh
 
         done = 1; // initialization done
@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     MPI_Bcast(&done, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     if(done==1){
-        string randmesh = "Freefem++ -nw ./utils/randmesh.edp -s "; // init mesh command
+        string randmesh = "FreeFem++ -nw ./utils/randmesh.edp -s "; // init mesh command
         string solve = "FreeFem++ -nw ./utils/solver.edp -r 1 -p 0 -s "; // solve problem command
 
         string samplemesh;
