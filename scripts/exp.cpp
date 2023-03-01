@@ -22,10 +22,7 @@ int main(int argc, char** argv) {
     int m = stoi(argv[4]);
 
     if(rank==0){
-        string clean = "./clean.exe"; // init clean command
         string mesh = "Freefem++ -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
-
-        system(clean.c_str()); // deleting cash
         system(mesh.c_str()); // creating new mesh
 
         done = 1; // initialization done
