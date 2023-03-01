@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
         done = 1; // initialization done
     }
 
+    /*
     MPI_Bcast(&done, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     if(done==1){
@@ -55,6 +56,7 @@ int main(int argc, char** argv) {
             system(exp.c_str()); // calculate expectation 
         }
     }
+    */
 
     MPI_Finalize();
 }
