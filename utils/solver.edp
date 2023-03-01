@@ -1,0 +1,109 @@
+load "iovtk"
+include "getARGV.idp"
+
+int p = getARGV("-p", 0); // checking saving pics
+int r = getARGV("-r", 0); // checking type of domain 
+int s = getARGV("-s", 1); // number of sample
+
+/* PROBELM INITIALISATION */
+
+string fmesh;
+string fmesh0;
+string fmesh1;
+
+if(r) {
+    fmesh0 = "./storage/meshes/rand/mesh0/mesh0_" + s + ".msh";
+    fmesh1= "./storage/meshes/rand/mesh1/mesh1_" + s + ".msh"; 
+    fmesh= "./storage/meshes/rand/mesh/mesh_" + s + ".msh"; 
+} else {
+    fmesh0 = "./storage/meshes/det/mesh0.msh";
+    fmesh1= "./storage/meshes/det/mesh1.msh"; 
+    fmesh= "./storage/meshes/det/mesh.msh"; 
+}
+
+mesh Th0 = readmesh(fmesh0); // body
+mesh Th1 = readmesh(fmesh1); // inculsion 
+mesh Th = readmesh(fmesh); // whole structure
+
+int dir = 1; // dirichlet label
+int neu = 3; // neuman label
+
+macro epsilon(u, v) [dx(u), dy(v), (dy(u)+dx(v))/sqrt(2.)] // deformation tensor
+macro div(u,v) (dx(u) + dy(v)) // divergence
+
+real f = 0.; // gravity force
+real g = -2.; // surface force
+
+fespace Vh1(Th, P1);
+
+real E0 = 20.;
+real sigma0 = 0.28; // steel
+real mu0 = E0/(2*(1+sigma0));
+real lambda0 = E0*sigma0/((1+sigma0)*(1-2*sigma0)); // parameters of body
+
+real E1 = 6.9;
+real sigma1 = 0.33; // alluminium
+real mu1 = E1/(2*(1+sigma1));
+real lambda1 = E1*sigma1/((1+sigma1)*(1-2*sigma1)); // parameters of inculsion 1
+
+Vh1 mu = mu0*chi(Th0)(x, y) + mu1*chi(Th1)(x,y);
+Vh1 lambda = lambda0*chi(Th0)(x, y) + lambda1*chi(Th1)(x,y); // construction parametres
+
+//plot(mu, fill = true, wait = true, value = true);
+//plot(lambda, fill = true, wait = true, value = true);
+
+/* PROBLEM SOLUTIUON */
+
+fespace Vh(Th, [P1,P1]); // fe-space
+Vh [u,v], [uu,vv]; // displacements field
+
+solve Elasticity ([u, v], [uu, vv]) // problem
+    = int2d(Th)(
+          lambda*div(uu,vv)*div(u,v)
+        + 2.*mu*(epsilon(uu,vv)'*epsilon(u,v))
+    )
+    - int2d(Th)(f*vv)
+    - int1d(Th,neu) (g*vv)
+    + on(dir, u=0., v=0.);
+
+Vh1 sig22=(lambda*dx(u)+(2*mu+lambda)*dy(v));
+Vh1 sig11=(lambda*dy(v)+(2*mu+lambda)*dx(u));
+Vh1 sig12=mu*.5*(dx(v)+dy(u));
+Vh1 sig=sqrt(sig11*sig11+sig22*sig22-sig11*sig22+3*sig12*sig12); // General plane stress
+
+mesh Thd = movemesh(Th, [x+u, y+v]); // body deformation
+fespace Vhd1(Thd, P1); 
+Vhd1 strain = sqrt(abs(u*u + v*v)); // strain
+
+plot(sig, wait = true, value=true, fill = true);
+plot (strain, fill = true, value = true, wait = true);
+
+
+string fsig;
+string fu;
+string fv;
+
+if(r) {
+    fsig = "./storage/solutions/rand/sig/sig_" + s + ".txt";
+    fu = "./storage/solutions/rand/u/u_" + s + ".txt";
+    fv = "./storage/solutions/rand/v/v_" + s + ".txt";
+    if(p) {
+        savevtk("./storage/paraview/sig_sample.vtu", Th, sig, dataname="sig_sample");
+        savevtk("./storage/paraview/strain_sample.vtu", Thd, strain, dataname="strain_sample");
+    }
+} else {
+    fsig = "./storage/solutions/det/sig_det.txt";
+    fu = "./storage/solutions/det/u_det.txt";
+    fv = "./storage/solutions/det/v_det.txt";
+
+    savevtk("./storage/paraview/sig_det.vtu", Th, sig, dataname="sig_det");
+    savevtk("./storage/paraview/strain_det.vtu", Thd, strain, dataname="strain_det");
+}
+
+ofstream ffsig(fsig);
+ofstream ffu(fu);
+ofstream ffv(fv);
+
+ffsig << sig[];
+ffu << u[];
+ffv << v[];

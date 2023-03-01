@@ -1,0 +1,43 @@
+load "iovtk"
+include "getARGV.idp"
+
+int m = getARGV("-m", 10); // setting triangulation number
+
+mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
+
+fespace Vh1(Th, P1);
+Vh1 ESig, ESig2, VSig, sigi;
+
+fespace Vh(Th, [P1,P1]);
+Vh [Eu,Ev], [ui,vi];
+
+for(int i=1; i<m+1; i++){
+    ifstream fsigi("./storage/solutions/rand/sig/sig_" + i + ".txt");
+    fsigi >> sigi[];
+
+    ifstream fui("./storage/solutions/rand/u/u_" + i + ".txt");
+    fui >> ui[];
+
+    ifstream fvi("./storage/solutions/rand/v/v_" + i + ".txt");
+    fvi >> vi[];
+
+    ESig = ESig + sigi/m;
+    ESig2 = ESig2 + sigi*sigi/m;
+    [Eu,Ev] = [Eu,Ev] + [ui/m,vi/m];
+}
+
+VSig = ESig2 - ESig*ESig;
+
+plot(ESig, wait = true, value=true, fill = true);
+savevtk("./storage/paraview/sig_exp.vtu", Th, ESig, dataname="sig_exp");
+
+plot(VSig, wait = true, value=true, fill = true);
+savevtk("./storage/paraview/sig_var.vtu", Th, VSig, dataname="sig_var");
+
+mesh Thd = movemesh(Th, [x+Eu, y+Ev]); // body deformation
+fespace Vhd1(Thd, P1); 
+Vhd1 EStrain = sqrt(abs(Eu*Eu + Ev*Ev)); // strain
+
+plot (EStrain, fill = true, value = true, wait = true);
+savevtk("./storage/paraview/strain_exp.vtu", Thd, EStrain, dataname="mov_exp");
+

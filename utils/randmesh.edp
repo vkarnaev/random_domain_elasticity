@@ -1,0 +1,51 @@
+include "getARGV.idp"
+load "iovtk"
+
+int s = getARGV("-s", 1); // setting triangulation number
+
+/* INITIAL MESH */
+
+mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
+mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
+mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
+
+/* MAPPING PARAMETRES */
+
+func real Halton (int index, int base){ // Halton sequence function
+  real f = 1.;
+  real r = 0.;
+
+  int i = index;
+  int b = base;
+
+  while(i > 0){
+    f /= b;
+    r += f*(i%b);
+    i /=b;
+  }
+
+  r = sqrt(3)*(2.*r-1.);
+  return r;
+}
+
+func R = 5*abs((sqrt(x^2+y^2) - 0.5))+1.5;
+func B = (0.5*R^2*((R>=0)&&(R<1)) + 0.5*(-2*R^2 + 6*R-3)*((R>=1)&&(R<2)) +  0.5*((3-R)^2)*((R>=2)&&(R<3)))*4/3;
+
+fespace Vh1(Th, P1);
+
+Vh1 k;
+for (int i=0;i<6;i++) k = k + (cos(i*atan2(y,x))*Halton(s,2*i+2) + sin(i*atan2(y,x))*Halton(s,2*i+3))/80.;
+
+Vh1 Bh = B;
+
+/* RANDOM MESH */
+
+Th0 = movemesh(Th0, [x+2*k*x*B, y+2*k*y*B]);
+Th1 = movemesh(Th1, [x+2*k*x*B, y+2*k*y*B]);
+Th = movemesh(Th, [x+2*k*x*B, y+2*k*y*B]);
+
+plot(Th, wait=true);
+
+savemesh(Th0, "./storage/meshes/rand/mesh0/mesh0_" + s + ".msh");
+savemesh(Th1, "./storage/meshes/rand/mesh1/mesh1_" + s + ".msh");
+savemesh(Th, "./storage/meshes/rand/mesh/mesh_" + s + ".msh");

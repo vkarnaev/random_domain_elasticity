@@ -1,0 +1,27 @@
+include "getARGV.idp"
+
+int n = getARGV("-n", 8); // setting triangulation number
+
+real ly = 1; // y-length
+real lx = 1.; // x-length
+
+border G01(t=-lx, lx){x=t; y=-ly; label=1;} // lower boundary
+border G02(t=-ly, ly){x=lx; y=t; label=2;} // right boundary
+border G03(t=lx, -lx){x=t; y=ly; label=3;} // upper boundary
+border G04(t=ly, -ly){x=-lx; y=t; label=4;} // lefr boundary
+
+real rad = 0.5;
+
+border G1(t=0, 2*pi){x=rad*cos(t); y=rad*sin(t); label=5;}
+
+mesh Th0 = buildmesh(G01(lx*n)+G02(ly*n)+G03(lx*n)+G04(ly*n) + G1(-4*rad*n)); // body
+mesh Th1 = buildmesh(G1(4*rad*n)); // inculsion 1
+
+mesh Th = Th0 + Th1;
+plot(Th, wait=true);
+
+//cout << endl << "number of triangles " << Th.nt << endl << endl;
+
+savemesh(Th0, "./storage/meshes/det/mesh0.msh");
+savemesh(Th1, "./storage/meshes/det/mesh1.msh");
+savemesh(Th, "./storage/meshes/det/mesh.msh");
