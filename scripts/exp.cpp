@@ -46,13 +46,13 @@ int main(int argc, char** argv) {
 
             system(samplemesh.c_str()); // mesh mapping for sample
             system(samplesolve.c_str()); // solve problem for sample 
+        }
 
-            MPI_Barrier(MPI_COMM_WORLD);
-            
-            if(rank==0){
-                string exp = "FreeFem++ -nw ./utils/exp.edp -m " + to_string(m); // init mesh command
-                system(exp.c_str()); // calculate expectation 
-            }
+        MPI_Barrier(MPI_COMM_WORLD);
+
+        if(rank==0){
+            string exp = "FreeFem++ -nw ./utils/exp.edp -m " + to_string(m); // init mesh command
+            system(exp.c_str()); // calculate expectation 
         }
     }
 
