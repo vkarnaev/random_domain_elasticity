@@ -7,6 +7,7 @@ init:
 	g++ -o ./sample.exe ./scripts/sample.cpp
 	mpicxx -o ./exp.exe ./scripts/exp.cpp
 
+	rm -r storage
 	mkdir storage
 
 	mkdir storage/meshes
