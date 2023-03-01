@@ -1,5 +1,2 @@
-*.txt
-*.msh
-*.vtu
-
 .vscode/
+storage/
