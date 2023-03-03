@@ -21,6 +21,7 @@ init:
 
 	mkdir storage/solutions
 	mkdir storage/solutions/det
+	mkdir storage/solutions/exp
 	mkdir storage/solutions/rand
 	mkdir storage/solutions/rand/sig
 	mkdir storage/solutions/rand/u

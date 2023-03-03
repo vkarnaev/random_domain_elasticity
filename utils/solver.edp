@@ -78,7 +78,6 @@ Vhd1 strain = sqrt(abs(u*u + v*v)); // strain
 plot(sig, wait = true, value=true, fill = true);
 plot (strain, fill = true, value = true, wait = true);
 
-
 string fsig;
 string fu;
 string fv;

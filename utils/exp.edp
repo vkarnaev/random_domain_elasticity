@@ -41,3 +41,17 @@ Vhd1 EStrain = sqrt(abs(Eu*Eu + Ev*Ev)); // strain
 plot (EStrain, fill = true, value = true, wait = true);
 savevtk("./storage/paraview/strain_exp.vtu", Thd, EStrain, dataname="mov_exp");
 
+string fesig = "./storage/solutions/exp/sig_exp.txt";
+string fvsig = "./storage/solutions/exp/sig_var.txt";
+string feu = "./storage/solutions/exp/u_exp.txt";
+string fev = "./storage/solutions/exp/v_exp.txt";
+
+ofstream ffesig(fesig);
+ofstream ffvsig(fvsig);
+ofstream ffeu(feu);
+ofstream ffev(fev);
+
+ffesig << ESig[];
+ffvsig << VSig[];
+ffeu << Eu[];
+ffev << Ev[];

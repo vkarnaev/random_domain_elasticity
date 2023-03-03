@@ -4,3 +4,5 @@ storage/
 *.log
 *.exe
 *.zip
+
+.DS_Store
