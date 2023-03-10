@@ -1,0 +1,36 @@
+mesh ThRef = readmesh("./experiments/10/mesh.msh"); // initialising reference mesh
+
+fespace VhRef(ThRef, [P1,P1]);
+VhRef [EuRef,EvRef];
+
+ifstream feuref("./experiments/10/solutions/u_exp.txt");
+feuref >> EuRef[];
+ifstream fevref("./experiments/10/solutions/v_exp.txt");
+fevref >> EvRef[];
+
+ofstream ferr("./experiments/err.txt");
+
+for(int i=1; i<10;i++){
+    mesh Th = readmesh("./experiments/"+i+"/mesh.msh"); // initialising experiment mesh
+
+    fespace Vh(Th, [P1,P1]);
+    Vh [Eu,Ev];
+
+    ifstream feu("./experiments/"+i+"/solutions/u_exp.txt");
+    feu >> Eu[];
+    ifstream fev("./experiments/"+i+"/solutions/v_exp.txt");
+    fev >> Ev[];
+
+    VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
+
+    macro jac(u, v) [[dx(u), dy(u)], [dx(v), dy(v)]] // jacobian matrix
+
+    real err = sqrt(int2d(Th) (dx(erru)*dx(erru) + dx(errv)*dx(errv) + dy(erru)*dy(erru) + dy(errv)*dy(errv)));
+
+    real m = 2*4^((i+1)/2);;
+    if(i%2==0) m = 5*4^(i/2);
+
+    real cost = 2*m*Eu.n;
+    
+    ferr << cost << " " << err << endl; 
+}

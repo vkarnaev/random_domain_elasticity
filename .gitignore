@@ -1,8 +1,8 @@
 .vscode/
 storage/
+experiments/
 
 *.log
 *.exe
-*.zip
 
 .DS_Store

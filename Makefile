@@ -3,6 +3,7 @@ storage.zip:
 
 
 init: 
+	g++ -o ./clean.exe ./scripts/clean.cpp
 	g++ -o ./det.exe ./scripts/det.cpp
 	g++ -o ./sample.exe ./scripts/sample.cpp
 	mpicxx -o ./exp.exe ./scripts/exp.cpp
@@ -26,3 +27,5 @@ init:
 	mkdir storage/solutions/rand/sig
 	mkdir storage/solutions/rand/u
 	mkdir storage/solutions/rand/v
+
+	rm storage.zip

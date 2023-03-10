@@ -53,6 +53,9 @@ int main(int argc, char** argv) {
         if(rank==0){
             string exp = "FreeFem++ -nw ./utils/exp.edp -m " + to_string(m); // init mesh command
             system(exp.c_str()); // calculate expectation 
+
+            string clean = "./clean.exe";
+            system(clean.c_str()); 
         }
     }
 
