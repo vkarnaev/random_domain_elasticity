@@ -11,6 +11,10 @@ init:
 	rm -r storage
 	mkdir storage
 
+	mkdir storage/ev
+	mkdir storage/ev/eV1
+	mkdir storage/ev/eV2
+
 	mkdir storage/meshes
 	mkdir storage/meshes/det
 	mkdir storage/meshes/rand

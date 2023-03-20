@@ -3,13 +3,9 @@ load "iovtk"
 
 int s = getARGV("-s", 1); // setting triangulation number
 
-/* INITIAL MESH */
-
 mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
 mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
-
-/* MAPPING PARAMETRES */
 
 func real Halton (int index, int base){ // Halton sequence function
   real f = 1.;
@@ -28,23 +24,40 @@ func real Halton (int index, int base){ // Halton sequence function
   return r;
 }
 
-func R = 5*abs((sqrt(x^2+y^2) - 0.5))+1.5;
-func B = (0.5*R^2*((R>=0)&&(R<1)) + 0.5*(-2*R^2 + 6*R-3)*((R>=1)&&(R<2)) +  0.5*((3-R)^2)*((R>=2)&&(R<3)))*4/3;
+ifstream fev("./storage/ev/ev.txt"); // file with eigen values
 
-fespace Vh1(Th, P1);
+real eig;
+fev  >> eig; // number of eigen values
 
-Vh1 k;
-for (int i=0;i<6;i++) k = k + (cos(i*atan2(y,x))*Halton(s,2*i+2) + sin(i*atan2(y,x))*Halton(s,2*i+3))/80.;
+real[int] ev(eig);
 
-Vh1 Bh = B;
+fespace Vh(Th, P1);
+Vh[int] eV1(eig), eV2(eig); // eigen vectors 
+Vh KL1, KL2; // random deformation field
 
-/* RANDOM MESH */
+for (int i=0; i<eig; i++){
+    ifstream feV1("./storage/ev/eV1/eV1" + i + ".txt"); 
+    ifstream feV2("./storage/ev/eV2/eV2" + i + ".txt"); // files with eigen vector
 
-Th0 = movemesh(Th0, [x+2*k*x*B, y+2*k*y*B]);
-Th1 = movemesh(Th1, [x+2*k*x*B, y+2*k*y*B]);
-Th = movemesh(Th, [x+2*k*x*B, y+2*k*y*B]);
+    fev >> ev[i]; // array of eigen values
+    feV1 >> eV1[i][];
+    feV2 >> eV2[i][]; // arrays of eigen vector
+   
+    //plot([eV1[i],eV2[i]], cmm="Eigen Vector "+i+" value ="+ev[i], wait=true, value=true);
 
-plot(Th, wait=true);
+    KL1 = KL1 + Halton(s,i+2)*sqrt(ev[i])*eV1[i];
+    KL2 = KL2 + Halton(s,i+2)*sqrt(ev[i])*eV2[i]; // KL computation
+}
+
+plot(Th,[KL1,KL2], wait=true, value=true);
+//savevtk("./storage/paraview/KL_sample.vtu", Th, [KL1, KL2, 0], dataname="KL_sample");
+
+Th0 = movemesh(Th0, [x+KL1, y+KL2]); // moving mesh
+Th1 = movemesh(Th1, [x+KL1, y+KL2]); // moving mesh
+Th = Th0 + Th1;
+
+plot(Th, wait = true);
+//savevtk("./storage/paraview/th_sample.vtu", Th, dataname="Th_sample");
 
 savemesh(Th0, "./storage/meshes/rand/mesh0/mesh0_" + s + ".msh");
 savemesh(Th1, "./storage/meshes/rand/mesh1/mesh1_" + s + ".msh");

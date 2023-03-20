@@ -20,8 +20,6 @@ mesh Th1 = buildmesh(G1(4*rad*n)); // inculsion 1
 mesh Th = Th0 + Th1;
 plot(Th, wait=true);
 
-//cout << endl << "number of triangles " << Th.nt << endl << endl;
-
 savemesh(Th0, "./storage/meshes/det/mesh0.msh");
 savemesh(Th1, "./storage/meshes/det/mesh1.msh");
 savemesh(Th, "./storage/meshes/det/mesh.msh");

@@ -15,6 +15,9 @@ int main(int argc, char* argv[]){
     clean = "rm -r  ./storage/meshes/rand";
     system(clean.c_str());
 
+    clean = "rm -r  ./storage/ev";
+    system(clean.c_str());
+
     clean = "zip -r storage.zip storage/";
     system(clean.c_str());
 
