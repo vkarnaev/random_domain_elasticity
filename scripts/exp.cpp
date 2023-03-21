@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
         string mesh = "FreeFem++ -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
         system(mesh.c_str()); // creating new mesh
 
-        string eig = "Freefem++ -nw ./utils/eig.edp"; // init eig command
+        string eig = "FreeFem++ -nw ./utils/eig.edp"; // init eig command
         system(eig.c_str()); // calculating eigenvalues of map
 
         done = 1; // initialization done
