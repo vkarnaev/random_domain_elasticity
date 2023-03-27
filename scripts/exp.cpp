@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
             system(exp.c_str()); // calculate expectation 
 
             string clean = "./clean.exe";
-            system(clean.c_str()); 
+           // system(clean.c_str()); 
         }
     }
 
