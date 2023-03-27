@@ -11,7 +11,7 @@ func real B(real x, real y){
 }
 
 func real K (real xi, real yi, real xj, real yj, int r, int s){ // Kernel function
-  real c = 1./20;
+  real c = 1./30;
   real bi = B(xi,yi);
   real bj = B(xj,yj);
 
@@ -153,10 +153,6 @@ border a(t=0, 2*pi){x=cos(t); y=sin(t); label=1;}
 mesh ThL = buildmesh(a(C.n), nbvx = C.n);
 fespace VhL(ThL, P1);
 VhL[int] eVL(nev); 
-
-//meshL ThL = segment(C.n-1,[x,0,0]) ;
-//fespace VhL(ThL, P1);
-//VhL[int] eVL(nev); // low rank eigenvectors array
 
 func real[int] FOP (real[int] & u){ real[int] Au = C*u; return Au; }
 int eig = EigenValue(C.n, A=FOP, mode=2, value=ev, nev = nev, vector=eVL, tol=tl); // eigenvalue problem solution
