@@ -25,6 +25,8 @@ mesh Th0 = readmesh(fmesh0); // body
 mesh Th1 = readmesh(fmesh1); // inculsion 
 mesh Th = readmesh(fmesh); // whole structure
 
+plot(Th, wait = true);
+
 int dir = 1; // dirichlet label
 int neu = 3; // neuman label
 
@@ -66,17 +68,19 @@ solve Elasticity ([u, v], [uu, vv]) // problem
     - int1d(Th,neu) (g*vv)
     + on(dir, u=0., v=0.);
 
+
+mesh Th0d = movemesh(Th0, [x+u, y+v]); 
+mesh Th1d = movemesh(Th1, [x+u, y+v]); 
+mesh Thd =Th0d + Th1d; // body deformation
+
+plot(Thd, wait = true);
+
 Vh1 sig22=(lambda*dx(u)+(2*mu+lambda)*dy(v));
 Vh1 sig11=(lambda*dy(v)+(2*mu+lambda)*dx(u));
 Vh1 sig12=mu*.5*(dx(v)+dy(u));
 Vh1 sig=sqrt(sig11*sig11+sig22*sig22-sig11*sig22+3*sig12*sig12); // General plane stress
 
-mesh Thd = movemesh(Th, [x+u, y+v]); // body deformation
-fespace Vhd1(Thd, P1); 
-Vhd1 strain = sqrt(abs(u*u + v*v)); // strain
-
 plot(sig, wait = true, value=true, fill = true);
-plot (strain, fill = true, value = true, wait = true);
 
 string fsig;
 string fu;
@@ -88,7 +92,6 @@ if(r) {
     fv = "./storage/solutions/rand/v/v_" + s + ".txt";
     if(p) {
         savevtk("./storage/paraview/sig_sample.vtu", Th, sig, dataname="sig_sample");
-        savevtk("./storage/paraview/strain_sample.vtu", Thd, strain, dataname="strain_sample");
     }
 } else {
     fsig = "./storage/solutions/det/sig_det.txt";
@@ -96,7 +99,6 @@ if(r) {
     fv = "./storage/solutions/det/v_det.txt";
 
     savevtk("./storage/paraview/sig_det.vtu", Th, sig, dataname="sig_det");
-    savevtk("./storage/paraview/strain_det.vtu", Thd, strain, dataname="strain_det");
 }
 
 ofstream ffsig(fsig);
@@ -106,3 +108,7 @@ ofstream ffv(fv);
 ffsig << sig[];
 ffu << u[];
 ffv << v[];
+
+savemesh(Th0d, "./storage/meshes/def/mesh0.msh");
+savemesh(Th1d, "./storage/meshes/def/mesh1.msh");
+savemesh(Thd, "./storage/meshes/def/mesh.msh");

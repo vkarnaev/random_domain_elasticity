@@ -17,6 +17,7 @@ init:
 
 	mkdir storage/meshes
 	mkdir storage/meshes/det
+	mkdir storage/meshes/def
 	mkdir storage/meshes/rand
 	mkdir storage/meshes/rand/mesh
 	mkdir storage/meshes/rand/mesh0
