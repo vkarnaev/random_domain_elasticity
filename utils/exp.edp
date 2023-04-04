@@ -3,6 +3,8 @@ include "getARGV.idp"
 
 int m = getARGV("-m", 10); // setting number of samples
 
+mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
+mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
 
 fespace Vh1(Th, P1);
@@ -32,7 +34,9 @@ if(m==10000){
     savevtk("./exp/sig_exp_10k.vtu", Th, ESig, dataname="sig_exp_10k");
     savevtk("./exp/sig_var_10k.vtu", Th, VSig, dataname="sig_var_10k");
 
-    mesh Thd = movemesh(Th, [x+Eu, y+Ev]); // body deformation
+    mesh Th0d = movemesh(Th0, [x+Eu, y+Ev]); 
+    mesh Th1d = movemesh(Th1, [x+Eu, y+Ev]); 
+    mesh Thd =Th0d + Th1d; // body deformation
 
     savemesh(Th0d, "./exp/mesh0_10k.msh");
     savemesh(Th1d, "./exp/mesh1_10k.msh");
