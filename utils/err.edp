@@ -1,32 +1,29 @@
-mesh ThRef = readmesh("./experiments/ref/mesh.msh"); // initialising reference mesh
+mesh Th = readmesh("./experiments/levels/mesh.msh"); // initialising reference mesh
 
-fespace VhRef(ThRef, [P1,P1]);
-VhRef [EuRef,EvRef];
+fespace Vh(Th, [P1,P1]);
+Vh [EuRef,EvRef];
 
-ifstream feuref("./experiments/ref/solutions/u_exp.txt");
+ifstream feuref("./experiments/levels/u_exp_10000.txt");
 feuref >> EuRef[];
-ifstream fevref("./experiments/ref/solutions/v_exp.txt");
+ifstream fevref("./experiments/levels/v_exp_10000.txt");
 fevref >> EvRef[];
 
-ofstream ferr("./experiments/err.txt");
+ofstream ferr("./experiments/levels/err.txt");
 
-for(int i=1; i<10;i++){
-    mesh Th = readmesh("./experiments/"+i+"/mesh.msh"); // initialising experiment mesh
+for(int i=1; i<11;i++){
+    real cost = 8*2^(i-1);
 
-    fespace Vh(Th, [P1,P1]);
     Vh [Eu,Ev];
 
-    ifstream feu("./experiments/"+i+"/solutions/u_exp.txt");
+    ifstream feu("./experiments/levels/u_exp_" + cost + ".txt");
     feu >> Eu[];
-    ifstream fev("./experiments/"+i+"/solutions/v_exp.txt");
+    ifstream fev("./experiments/levels/v_exp_" + cost + ".txt");
     fev >> Ev[];
 
-    VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
+    Vh [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
 
     //real err = sqrt(int2d(Th) (dx(erru)*dx(erru) + dx(errv)*dx(errv) + dy(erru)*dy(erru) + dy(errv)*dy(errv)));
     real err = sqrt(int2d(Th) (erru*erru + errv*errv));
-
-    real cost = 8*2^(i-1);
     
     ferr << cost << " " << err << endl; 
 }

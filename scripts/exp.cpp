@@ -20,12 +20,13 @@ int main(int argc, char** argv) {
 
     int n = stoi(argv[2]);
     int m = stoi(argv[4]);
+    int h = stoi(argv[6]);
 
     if(rank==0){
-        string mesh = "FreeFem++ -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
+        string mesh = "FreeFem++ -nw -ne ./utils/mesh.edp -n " + to_string(n); // init mesh command
         system(mesh.c_str()); // creating new mesh
 
-        string eig = "FreeFem++ -nw ./utils/eig.edp"; // init eig command
+        string eig = "FreeFem++ -nw -ne ./utils/eig.edp"; // init eig command
         system(eig.c_str()); // calculating eigenvalues of map
 
         done = 1; // initialization done
@@ -34,8 +35,10 @@ int main(int argc, char** argv) {
     MPI_Bcast(&done, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     if(done==1){
-        string randmesh = "FreeFem++ -nw ./utils/randmesh.edp -s "; // init mesh command
-        string solve = "FreeFem++ -nw ./utils/solver.edp -r 1 -p 0 -s "; // solve problem command
+        string randmesh = "FreeFem++ -nw -ne ./utils/randmesh.edp -h "; // init mesh command
+        randmesh = randmesh + to_string(h);
+        randmesh = randmesh + " -s ";
+        string solve = "FreeFem++ -nw -ne ./utils/solver.edp -r 1 -p 0 -s "; // solve problem command
 
         string samplemesh;
         string samplesolve;
@@ -47,22 +50,11 @@ int main(int argc, char** argv) {
             samplemesh = randmesh + to_string(i);
             samplesolve = solve + to_string(i);
 
+            cout << samplemesh << endl;
+
             system(samplemesh.c_str()); // mesh mapping for sample
             system(samplesolve.c_str()); // solve problem for sample 
         }
-     /*
-        MPI_Barrier(MPI_COMM_WORLD);
-
-   
-        if(rank==0){
-            string exp = "FreeFem++ -nw ./utils/exp.edp -m " + to_string(m); // init mesh command
-            system(exp.c_str()); // calculate expectation 
-
-            string clean = "./clean.exe";
-           // system(clean.c_str()); 
-        }
-
-        */
     }
 
     MPI_Finalize();
