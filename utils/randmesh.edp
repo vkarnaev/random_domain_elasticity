@@ -15,6 +15,7 @@ func real Sobol (int sample, int base, int m, real[int] p){ // Halton sequence f
   int j = base;
 
   r = sqrt(3)*(2.*p[j+i*m]-1.);
+
   return r;
 }
 
