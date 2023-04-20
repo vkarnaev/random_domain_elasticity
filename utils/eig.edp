@@ -20,12 +20,22 @@ func real K (real xi, real yi, real xj, real yj, int r, int s){ // Kernel functi
 
   real f = 0.;
 
+    /*
     if (r==1){
       if (s==1) f = 5*exp(-8.*((xi-xj)^2 + (yi-yj)^2))*cos(thetai)*cos(thetaj);
       else f = -exp(-5.*((2*xi-xj)^2 + (2*yi-yj)^2))*cos(thetai)*sin(thetaj);
     } else {
       if (s==1) f = -exp(-5.*((xi-2*xj)^2 + (yi-2*yj)^2))*sin(thetai)*cos(thetaj);
       else f = 5*exp(-8.*((xi-xj)^2 + (yi-yj)^2))*sin(thetai)*sin(thetaj);
+    }
+    */
+
+    if (r==1){
+      if (s==1) f = 5*exp(-8.*((xi-xj)^2 + (yi-yj)^2));
+      else f = -exp(-5.*((2*xi-xj)^2 + (2*yi-yj)^2));
+    } else {
+      if (s==1) f = -exp(-5.*((xi-2*xj)^2 + (yi-2*yj)^2));
+      else f = 5*exp(-8.*((xi-xj)^2 + (yi-yj)^2));
     }
 
     f *= bi*bj*c;
