@@ -14,8 +14,7 @@ func real Sobol (int sample, int base, int m, real[int] p){ // Halton sequence f
   int i = sample;
   int j = base;
 
-  //r = sqrt(3)*(2.*p[j+i*m]-1.);
-  r = p[j+i*m];
+  r = sqrt(3)*(2.*p[j+i*m]-1.);
   return r;
 }
 
@@ -68,7 +67,6 @@ for (int i=0; i<eig; i++){
    
     //plot([eV1[i],eV2[i]], cmm="Eigen Vector "+i+" value ="+ev[i], wait=true, value=true);
     if(h){
-      cout << "Sample:  " << s << "   i:  " << i << "  point:  " << Sobol(s,i,m,p) << endl;
       KL1 = KL1 + Sobol(s,i,m,p)*sqrt(ev[i])*eV1[i];
       KL2 = KL2 + Sobol(s,i,m,p)*sqrt(ev[i])*eV2[i]; // KL computation for Sobol HO points
     } else {
