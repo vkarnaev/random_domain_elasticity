@@ -1,6 +1,6 @@
 string folderSol = "hqmc";
-string folderRef = "qmc";
-string fileErr = "hqmc_vs_qmc";
+string folderRef = "hqmc";
+string fileErr = "hqmc";
 
 mesh Th = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
 
@@ -19,7 +19,7 @@ fespace Vh1(Th1, [P1,P1]);
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-for(int i=1; i<8;i++){
+for(int i=1; i<11;i++){
     real cost = 8*2^(i-1);
 
     Vh1 [Eu,Ev];
