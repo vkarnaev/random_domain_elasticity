@@ -7,8 +7,8 @@ mesh Th = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising 
 fespace Vh(Th, [P1,P1]);
 Vh [EuRef,EvRef];
 
-ifstream feuref("./experiments/" + folderRef + "/u_exp_10000.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_10000.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_512.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_512.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
@@ -19,7 +19,7 @@ fespace Vh1(Th1, [P1,P1]);
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-for(int i=1; i<11;i++){
+for(int i=1; i<7;i++){
     real cost = 8*2^(i-1);
 
     Vh1 [Eu,Ev];
