@@ -37,11 +37,12 @@ if(m==10000){
     mesh Th0d = movemesh(Th0, [x+Eu, y+Ev]); 
     mesh Th1d = movemesh(Th1, [x+Eu, y+Ev]); 
     mesh Thd =Th0d + Th1d; // body deformation
+}
 
-    savemesh(Th0d, "./exp/mesh0_10k.msh");
-    savemesh(Th1d, "./exp/mesh1_10k.msh");
-    savemesh(Thd, "./exp/mesh_10k.msh");
-
+if (m==8) {
+    savemesh(Th0d, "./exp/mesh0.msh");
+    savemesh(Th1d, "./exp/mesh1.msh");
+    savemesh(Thd, "./exp/mesh.msh");
 }
 
 string fesig = "./exp/sig_exp_" + m + ".txt";
