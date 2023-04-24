@@ -40,9 +40,9 @@ if(m==10000){
 }
 
 if (m==8) {
-    savemesh(Th0d, "./exp/mesh0.msh");
-    savemesh(Th1d, "./exp/mesh1.msh");
-    savemesh(Thd, "./exp/mesh.msh");
+    savemesh(Th0, "./exp/mesh0.msh");
+    savemesh(Th1, "./exp/mesh1.msh");
+    savemesh(Th, "./exp/mesh.msh");
 }
 
 string fesig = "./exp/sig_exp_" + m + ".txt";
