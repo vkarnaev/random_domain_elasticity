@@ -134,6 +134,7 @@ while ((k < stop) && (tl < tr)){ // main loop
 L.resize(2*Nv, k); // resizing L
 
 /* EIGENVALUE PROBLEM */
+
 fespace VhK(Th, P1); // fe-space for domain map
 fespace Vh(Th, [P1,P1]);
 
@@ -157,11 +158,8 @@ VhL[int] eVL(nev);
 func real[int] FOP (real[int] & u){ real[int] Au = C*u; return Au; }
 int eig = EigenValue(C.n, A=FOP, mode=2, value=ev, nev = nev, vector=eVL, tol=tl); // eigenvalue problem solution
 
-VhK[int] eV1(eig), eV2(eig); // eigenvectors array
-real[int] aeV(L.n); // temporary array
-
-ofstream fev("./storage/ev/ev.txt");
-fev << eig << endl;
+VhK[int] eV1(eig), eV2(eig), vgamma0(eig), vgamma1(eig);// eigenvectors array
+real[int] aeV(L.n), gamma0(eig), gamma1(eig), gamma(eig), agamma(3); // temporary array
 
 for (int i = 0; i < eig; i++){
   aeV =  L*eVL[i][]; // two eigenvectors as array
@@ -169,13 +167,59 @@ for (int i = 0; i < eig; i++){
   eV1[i][] = aeV(0:aeV.n/2-1);
   eV2[i][] = aeV(aeV.n/2:aeV.n-1); // original eigenvectors
 
+  vgamma0[i] = sqrt(eV1[i]^2 + eV2[i]^2);
+  vgamma1[i] = sqrt(dx(eV1[i])*dx(eV1[i]) + dx(eV2[i])*dx(eV2[i]) + dy(eV1[i])*dy(eV1[i]) + dy(eV2[i])*dy(eV2[i]));
+
+  gamma0[i] = vgamma0[i][].max;
+  gamma1[i] = vgamma1[i][].max;
+
+  agamma = [gamma0[i],  gamma1[i]];
+  gamma[i] = 2*sqrt(3.)*sqrt(ev[i])*agamma.max;
+}
+
+/* SORTING */
+
+int lng = eig;
+
+while(lng--){
+  bool swapped = false;
+  VhK swap1, swap2;
+  
+  for(int i = 0; i < lng; i++){
+    if(gamma[i] <= gamma[i + 1]){
+      swap(gamma[i], gamma[i + 1]);
+      swap(ev[i], ev[i + 1]);
+
+      swap1 = eV1[i];
+      eV1[i] = eV1[i+1];
+      eV1[i+1] = swap1; 
+
+      swap2 = eV2[i];
+      eV2[i] = eV2[i+1];
+      eV2[i+1] = swap2; 
+
+      swapped = true;
+    }
+  }
+  
+  if(swapped == false) break;
+}
+
+/* SAVING */
+
+ofstream fgamma("./storage/ev/gamma.txt");
+ofstream fev("./storage/ev/ev.txt");
+fev << eig << endl;
+
+for (int i = 0; i < eig; i++){
+  fgamma << gamma[i] << endl;
+
   ofstream feV1("./storage/ev/eV1/eV1" + i + ".txt");
   ofstream feV2("./storage/ev/eV2/eV2" + i + ".txt");
- 
 
   feV1 << eV1[i][];
   feV2 << eV2[i][];
-  fev << "  " << ev[i] << endl;
+  fev << "  " << ev[i] << endl; 
 
   plot([eV1[i],eV2[i]], cmm="Eigen Vector "+i+" value ="+ev[i], wait=true, value=true, fill = true);
-}
+} 

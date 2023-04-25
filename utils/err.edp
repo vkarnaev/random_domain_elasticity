@@ -1,11 +1,14 @@
-string folderSol = "hqmc";
-string folderRef = "hqmc";
-string fileErr = "hqmc";
+string folderSol = "hqmc_3";
+string folderRef = "qmc";
+string fileErr = "hqmc_3_vs_qmc";
 
-mesh Th = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
+mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
+mesh ThSol = readmesh("./experiments/" + folderSol + "/mesh.msh"); // initialising reference mesh
 
-fespace Vh(Th, [P1,P1]);
-Vh [EuRef,EvRef];
+fespace VhRef(ThRef, [P1,P1]);
+VhRef [EuRef,EvRef];
+
+fespace VhSol(ThSol, [P1,P1]);
 
 ifstream feuref("./experiments/" + folderRef + "/u_exp_10000.txt");
 ifstream fevref("./experiments/" + folderRef + "/v_exp_10000.txt");
@@ -18,17 +21,17 @@ ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 for(int i=1; i<11;i++){
     real cost = 8*2^(i-1);
 
-    Vh [Eu,Ev];
+    VhSol [Eu,Ev];
 
     ifstream feu("./experiments/" + folderSol + "/u_exp_" + cost + ".txt");
     feu >> Eu[];
     ifstream fev("./experiments/" + folderSol + "/v_exp_" + cost + ".txt");
     fev >> Ev[];
 
-    Vh [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
+    VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
 
     //real err = sqrt(int2d(Th) (dx(erru)*dx(erru) + dx(errv)*dx(errv) + dy(erru)*dy(erru) + dy(errv)*dy(errv)));
-    real err = sqrt(int2d(Th) (erru*erru + errv*errv));
+    real err = sqrt(int2d(ThRef) (erru*erru + errv*errv));
     
     ferr << cost << " " << err << endl; 
 }
