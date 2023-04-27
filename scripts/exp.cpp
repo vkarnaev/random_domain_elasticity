@@ -35,7 +35,9 @@ int main(int argc, char** argv) {
     MPI_Bcast(&done, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
     if(done==1){
-        string randmesh = "FreeFem++ -nw -ne ./utils/randmesh.edp -h "; // init mesh command
+        string randmesh = "FreeFem++ -nw -ne ./utils/randmesh.edp -np ";
+        randmesh = randmesh + to_string(m);
+        randmesh = randmesh + " -h "; 
         randmesh = randmesh + to_string(h);
         randmesh = randmesh + " -s ";
         string solve = "FreeFem++ -nw -ne ./utils/solver.edp -r 1 -p 0 -s "; // solve problem command
@@ -49,8 +51,6 @@ int main(int argc, char** argv) {
         for(int i=upplim;i<lowlim;i++){
             samplemesh = randmesh + to_string(i);
             samplesolve = solve + to_string(i);
-
-            cout << samplemesh << endl;
 
             system(samplemesh.c_str()); // mesh mapping for sample
             system(samplesolve.c_str()); // solve problem for sample 

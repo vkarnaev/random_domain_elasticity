@@ -1,6 +1,7 @@
 include "getARGV.idp"
 load "iovtk"
 
+int np = getARGV("-np", 8); // sample number
 int s = getARGV("-s", 1); // sample number
 int h = getARGV("-h", 0); // high order or not 
 
@@ -17,7 +18,6 @@ func real Sobol (int sample, int base, int m, real[int] p){ // Halton sequence f
   r = sqrt(3)*(2.*p[j+i*m]-1.);
   return r;
 }
-
 
 func real Halton (int sample, int base){ // Halton sequence function
   real f = 1.;
@@ -36,12 +36,13 @@ func real Halton (int sample, int base){ // Halton sequence function
   return r;
 }
 
-int n = 16384;
+int n = np;
 int m = 100;
 real[int] p(n*m);
 
 if(h) {
-  ifstream points("./utils/points.txt");
+  np = log(1.*np)/log(2.);
+  ifstream points("./utils/points/points_sobol2_m" + np + ".txt");
   for(int j=0; j<n*m; j++) points >> p[j];
 }
 
@@ -79,8 +80,8 @@ for (int i=0; i<eig; i++){
       eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
       eV2[i] = sqrt(ev[i])*gamma[0]*k*c*eV2[i]/gamma[i];
 
-      KL1 = KL1 + Sobol(s,i,m,p)*eV1[i];
-      KL2 = KL2 + Sobol(s,i,m,p)*eV2[i]; // KL computation for Sobol HO points
+      KL1 = KL1 + Sobol(s-1,i,m,p)*eV1[i];
+      KL2 = KL2 + Sobol(s-1,i,m,p)*eV2[i]; // KL computation for Sobol HO points
     } else {
       KL1 = KL1 + Halton(s,i+2)*sqrt(ev[i])*eV1[i];
       KL2 = KL2 + Halton(s,i+2)*sqrt(ev[i])*eV2[i]; // KL computation for Halton points
