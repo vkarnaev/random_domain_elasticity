@@ -159,7 +159,7 @@ func real[int] FOP (real[int] & u){ real[int] Au = C*u; return Au; }
 int eig = EigenValue(C.n, A=FOP, mode=2, value=ev, nev = nev, vector=eVL, tol=tl); // eigenvalue problem solution
 
 VhK[int] eV1(eig), eV2(eig), vgamma0(eig), vgamma1(eig);// eigenvectors array
-real[int] aeV(L.n), gamma0(eig), gamma1(eig), gamma(eig), agamma(3); // temporary array
+real[int] aeV(L.n), gamma0(eig), gamma1(eig), gamma(eig), agamma(2); // temporary array
 
 for (int i = 0; i < eig; i++){
   aeV =  L*eVL[i][]; // two eigenvectors as array
