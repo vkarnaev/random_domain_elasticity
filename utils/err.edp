@@ -1,6 +1,6 @@
-string folderSol = "qmct";
-string folderRef = "qmc";
-string fileErr = "qmct";
+string folderSol = "hqmc";
+string folderRef = "hqmc";
+string fileErr = "hqmc";
 
 mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
 mesh ThSol = readmesh("./experiments/" + folderSol + "/mesh.msh"); // initialising reference mesh
@@ -10,15 +10,15 @@ VhRef [EuRef,EvRef];
 
 fespace VhSol(ThSol, [P1,P1]);
 
-ifstream feuref("./experiments/" + folderRef + "/u_exp_10000.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_10000.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_8192.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_8192.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-for(int i=1; i<7;i++){
+for(int i=1; i<8;i++){
     real cost = 8*2^(i-1);
 
     VhSol [Eu,Ev];

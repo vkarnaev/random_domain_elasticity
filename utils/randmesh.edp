@@ -72,16 +72,16 @@ for (int i=0; i<eig; i++){
    
     //plot([eV1[i],eV2[i]], cmm="Eigen Vector "+i+" value ="+ev[i], wait=true, value=true);
     if(h){
-      //KL1 = KL1 + Sobol(s,i,m,p)*sqrt(ev[i])*eV1[i];
-      //KL2 = KL2 + Sobol(s,i,m,p)*sqrt(ev[i])*eV2[i]; // KL computation for Sobol HO points
+      KL1 = KL1 + Sobol(s-1,i,m,p)*sqrt(ev[i])*eV1[i];
+      KL2 = KL2 + Sobol(s-1,i,m,p)*sqrt(ev[i])*eV2[i]; // KL computation for Sobol HO points
 
-      k = 1./((i+1)*(i+1));
+      //k = 1./((i+1)*(i+1));
 
-      eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
-      eV2[i] = sqrt(ev[i])*gamma[0]*k*c*eV2[i]/gamma[i];
+      //eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
+      //eV2[i] = sqrt(ev[i])*gamma[0]*k*c*eV2[i]/gamma[i];
 
-      KL1 = KL1 + Sobol(s-1,i,m,p)*eV1[i];
-      KL2 = KL2 + Sobol(s-1,i,m,p)*eV2[i]; // KL computation for Sobol HO points
+      //KL1 = KL1 + Sobol(s-1,i,m,p)*eV1[i];
+      //KL2 = KL2 + Sobol(s-1,i,m,p)*eV2[i]; // KL computation for Sobol HO points
     } else {
       KL1 = KL1 + Halton(s,i+2)*sqrt(ev[i])*eV1[i];
       KL2 = KL2 + Halton(s,i+2)*sqrt(ev[i])*eV2[i]; // KL computation for Halton points
