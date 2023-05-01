@@ -1,50 +1,20 @@
 include "getARGV.idp"
 load "iovtk"
 
-int np = getARGV("-np", 8); // sample number
+int np = getARGV("-np", 8);
 int s = getARGV("-s", 1); // sample number
-int h = getARGV("-h", 0); // high order or not 
+string points = getARGV("-p", ""); // high order or not 
 
 mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
 mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
 
-func real Sobol (int sample, int base, int m, real[int] p){ // Halton sequence function
-  real r = 0.;
-
-  int i = sample;
-  int j = base;
-
-  r = sqrt(3)*(2.*p[j+i*m]-1.);
-  return r;
-}
-
-func real Halton (int sample, int base){ // Halton sequence function
-  real f = 1.;
-  real r = 0.;
-
-  int i = sample;
-  int j = base;
-
-  while(i > 0){
-    f /= j;
-    r += f*(i%j);
-    i /=j;
-  }
-
-  r = sqrt(3)*(2.*r-1.);
-  return r;
-}
-
 int n = np;
 int m = 100;
-real[int] p(n*m);
+real[int] ap(n*m);
 
-if(h) {
-  np = log(1.*np)/log(2.);
-  ifstream points("./utils/points/points_sobol2_m" + np + ".txt");
-  for(int j=0; j<n*m; j++) points >> p[j];
-}
+ifstream fp(points);
+for(int j=0; j<n*m; j++) fp >> ap[j];
 
 ifstream fev("./storage/ev/ev.txt"); // file with eigen values
 ifstream fgamma("./storage/ev/gamma.txt");
@@ -52,41 +22,26 @@ ifstream fgamma("./storage/ev/gamma.txt");
 real eig;
 fev  >> eig; // number of eigen values
 
-real[int] ev(eig), gamma(eig);
+real[int] ev(eig);
+
+real p = 0.;
 
 fespace Vh(Th, P1);
 Vh[int] eV1(eig), eV2(eig); // eigen vectors 
 Vh KL1, KL2; // random deformation field
 
-real c = 0.1;
-real k = 0.;
-
 for (int i=0; i<eig; i++){
-    ifstream feV1("./storage/ev/eV1/eV1" + i + ".txt"); 
-    ifstream feV2("./storage/ev/eV2/eV2" + i + ".txt"); // files with eigen vector
+  ifstream feV1("./storage/ev/eV1/eV1" + i + ".txt"); 
+  ifstream feV2("./storage/ev/eV2/eV2" + i + ".txt"); // files with eigen vector
 
-    fgamma >> gamma[i];
-    fev >> ev[i]; // array of eigen values
-    feV1 >> eV1[i][];
-    feV2 >> eV2[i][]; // arrays of eigen vector
+  fev >> ev[i]; // array of eigen values
+  feV1 >> eV1[i][];
+  feV2 >> eV2[i][]; // arrays of eigen vector
    
-    //plot([eV1[i],eV2[i]], cmm="Eigen Vector "+i+" value ="+ev[i], wait=true, value=true);
-    if(h){
-      KL1 = KL1 + Sobol(s-1,i,m,p)*sqrt(ev[i])*eV1[i];
-      KL2 = KL2 + Sobol(s-1,i,m,p)*sqrt(ev[i])*eV2[i]; // KL computation for Sobol HO points
+  p = sqrt(3)*(2.*ap[i+(s-1)*m]-1.);
 
-      //k = 1./((i+1)*(i+1));
-
-      //eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
-      //eV2[i] = sqrt(ev[i])*gamma[0]*k*c*eV2[i]/gamma[i];
-
-      //KL1 = KL1 + Sobol(s-1,i,m,p)*eV1[i];
-      //KL2 = KL2 + Sobol(s-1,i,m,p)*eV2[i]; // KL computation for Sobol HO points
-    } else {
-      KL1 = KL1 + Halton(s,i+2)*sqrt(ev[i])*eV1[i];
-      KL2 = KL2 + Halton(s,i+2)*sqrt(ev[i])*eV2[i]; // KL computation for Halton points
-    }
-
+  KL1 = KL1 + p*sqrt(ev[i])*eV1[i];
+  KL2 = KL2 + p*sqrt(ev[i])*eV2[i]; 
 }
 
 plot(Th,[KL1,KL2], wait=true, value=true);

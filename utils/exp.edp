@@ -2,6 +2,16 @@ load "iovtk"
 include "getARGV.idp"
 
 int m = getARGV("-m", 10); // setting number of samples
+string weights = getARGV("-w", "");
+
+real[int] w(m);
+
+try{
+    ifstream fw(weights);
+    for(int i=0; i<m; i++) fw >> w[i];
+} catch(...) {
+    for(int i=0; i<m; i++) w[i] = 1./m;
+}
 
 mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
 mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
@@ -23,14 +33,14 @@ for(int i=1; i<m+1; i++){
     ifstream fvi("./storage/solutions/rand/v/v_" + i + ".txt");
     fvi >> vi[];
 
-    ESig = ESig + sigi/m;
-    ESig2 = ESig2 + sigi*sigi/m;
-    [Eu,Ev] = [Eu,Ev] + [ui/m,vi/m];
+    ESig = ESig + w[i-1]*sigi;
+    ESig2 = ESig2 + w[i-1]*sigi*sigi;
+    [Eu,Ev] = [Eu,Ev] + [w[i-1]*ui,w[i-1]*vi];
 }
 
 VSig = ESig2 - ESig*ESig;
 
-if(m==10000){
+if(m>=8000){
     savevtk("./exp/sig_exp_10k.vtu", Th, ESig, dataname="sig_exp_10k");
     savevtk("./exp/sig_var_10k.vtu", Th, VSig, dataname="sig_var_10k");
 
@@ -39,23 +49,17 @@ if(m==10000){
     mesh Thd =Th0d + Th1d; // body deformation
 }
 
-if (m==8) {
+if (m<=8) {
     savemesh(Th0, "./exp/mesh0.msh");
     savemesh(Th1, "./exp/mesh1.msh");
     savemesh(Th, "./exp/mesh.msh");
 }
 
-string fesig = "./exp/sig_exp_" + m + ".txt";
-string fvsig = "./exp/sig_var_" + m + ".txt";
 string feu = "./exp/u_exp_" + m + ".txt";;
 string fev = "./exp/v_exp_" + m + ".txt";
 
-ofstream ffesig(fesig);
-ofstream ffvsig(fvsig);
 ofstream ffeu(feu);
 ofstream ffev(fev);
 
-ffesig << ESig[];
-ffvsig << VSig[];
 ffeu << Eu[];
 ffev << Ev[];

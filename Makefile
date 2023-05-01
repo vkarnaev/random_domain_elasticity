@@ -1,7 +1,3 @@
-storage.zip:
-	zip -r storage.zip storage/
-
-
 init: 
 	g++ -o ./clean.exe ./scripts/clean.cpp
 	g++ -o ./det.exe ./scripts/det.cpp
@@ -33,4 +29,4 @@ init:
 	mkdir storage/solutions/rand/u
 	mkdir storage/solutions/rand/v
 
-	rm storage.zip
+	mkdir -p exp

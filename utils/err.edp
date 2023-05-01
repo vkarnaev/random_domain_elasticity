@@ -18,7 +18,7 @@ fevref >> EvRef[];
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-for(int i=1; i<8;i++){
+for(int i=1; i<7;i++){
     real cost = 8*2^(i-1);
 
     VhSol [Eu,Ev];
