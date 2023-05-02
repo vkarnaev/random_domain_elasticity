@@ -1,20 +1,19 @@
 string folderSol = "sg";
-string folderRef = "sg";
+string folderRef = "hqmc";
 string fileErr = "sg";
 
 mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
-mesh ThSol = readmesh("./experiments/" + folderSol + "/mesh.msh"); // initialising reference mesh
-
 fespace VhRef(ThRef, [P1,P1]);
 VhRef [EuRef,EvRef];
 
-fespace VhSol(ThSol, [P1,P1]);
-
-ifstream feuref("./experiments/" + folderRef + "/u_exp_7.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_7.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_8192.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_8192.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
+
+mesh ThSol = readmesh("./experiments/" + folderSol + "/mesh.msh"); // initialising reference mesh
+fespace VhSol(ThSol, [P1,P1]);
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
@@ -25,13 +24,14 @@ int m = 6;
 
 for(int i=1; i<m;i++){
     //cost = 8*2^(i-1);
-    cost = acost[i];
+    cost = acost[i-1];
 
     VhSol [Eu,Ev];
 
     ifstream feu("./experiments/" + folderSol + "/u_exp_" + i + ".txt");
-    feu >> Eu[];
     ifstream fev("./experiments/" + folderSol + "/v_exp_" + i + ".txt");
+
+    feu >> Eu[];
     fev >> Ev[];
 
     VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
