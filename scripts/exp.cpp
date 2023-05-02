@@ -11,39 +11,43 @@ int main(int argc, char** argv) {
 
     int rank;
     int size;
+
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
-    FILE *fp;
-    char c;
-
-    int m = 0;
-
     int n = stoi(argv[2]);
-    string points = argv[4];
-    string weights = argv[6];
+    int t = stoi(argv[4]);
+    int l = stoi(argv[6]);
 
-    points = "./utils/points/" + points;
-    weights = "./utils/points/" + weights;
+    string file;
+    if(t==2) file = "./utils/points/SG-GL_weights_l";
+    
+    file = file + to_string(l) + ".txt"; 
+
+    ifstream inFile(file); 
+    int m = count(istreambuf_iterator<char>(inFile), istreambuf_iterator<char>(), '\n');
+
+    int done = 0;
 
     if(rank==0){
-        fp = fopen(points.c_str(), "r");
-        for (c = getc(fp); c != EOF; c = getc(fp)) if (c == '\n') m+=1;
-
         string mesh = "FreeFem++ -nw -ne ./utils/mesh.edp -n " + to_string(n); // init mesh command
-        system(mesh.c_str()); // creating new mesh
-
         string eig = "FreeFem++ -nw -ne ./utils/eig.edp"; // init eig command
+
+        system(mesh.c_str()); // creating new mesh
         system(eig.c_str()); // calculating eigenvalues of map
+
+        done = 1;
     }
 
-    MPI_Bcast(&m, 1, MPI_INT, 0, MPI_COMM_WORLD);
+    MPI_Bcast(&done, 1, MPI_INT, 0, MPI_COMM_WORLD);
 
-    if(m){
+    if(done){
         string randmesh = "FreeFem++ -nw -ne ./utils/randmesh.edp";
-        randmesh = randmesh + " -np " + to_string(m);
-        randmesh = randmesh + " -p " + points; 
+        randmesh = randmesh + " -t " + to_string(t);
+        randmesh = randmesh + " -l " + to_string(l); 
+        randmesh = randmesh + " -m " + to_string(m); 
         randmesh = randmesh + " -s ";
+
         string solve = "FreeFem++ -nw -ne ./utils/solver.edp -r 1 -p 0 -s "; // solve problem command
 
         string samplemesh;
@@ -63,8 +67,11 @@ int main(int argc, char** argv) {
         MPI_Barrier(MPI_COMM_WORLD);
 
         if(rank==0){
-            string exp = "FreeFem++ -nw -ne ./utils/exp.edp -m " + to_string(m);
-            exp = exp + " -w " + weights;
+            string exp = "FreeFem++ -nw -ne ./utils/exp.edp";
+            exp = exp + " -t " + to_string(t);
+            exp = exp + " -l " + to_string(l);
+            exp = exp + " -m " + to_string(m);
+
             system(exp.c_str()); 
         }
     }

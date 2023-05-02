@@ -1,20 +1,30 @@
 include "getARGV.idp"
 load "iovtk"
 
-int np = getARGV("-np", 8);
 int s = getARGV("-s", 1); // sample number
-string points = getARGV("-p", ""); // high order or not 
+int t = getARGV("-t", 0); // quadrature type
+int l = getARGV("-l", 1); // level
+int m = getARGV("-m", 0); // number of samples
 
 mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
 mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
 
-int n = np;
-int m = 100;
-real[int] ap(n*m);
+string file; 
+if(t==2) file = "./utils/points/SG-GL_points_l" + l + ".txt";
+ifstream fp(file);
 
-ifstream fp(points);
-for(int j=0; j<n*m; j++) fp >> ap[j];
+if(!m){ 
+  m = -1;
+
+  string c;
+  while(1){
+    if (!fp.good()) break;
+    getline(fp, c);
+    m++;
+  }
+  fp.seekg(0);
+}
 
 ifstream fev("./storage/ev/ev.txt"); // file with eigen values
 ifstream fgamma("./storage/ev/gamma.txt");
@@ -23,6 +33,9 @@ real eig;
 fev  >> eig; // number of eigen values
 
 real[int] ev(eig);
+
+real[int] ap(m*eig);
+for(int j=0; j<m*eig; j++) fp >> ap[j];
 
 real p = 0.;
 
@@ -37,11 +50,14 @@ for (int i=0; i<eig; i++){
   fev >> ev[i]; // array of eigen values
   feV1 >> eV1[i][];
   feV2 >> eV2[i][]; // arrays of eigen vector
-   
-  p = sqrt(3)*(2.*ap[i+(s-1)*m]-1.);
+
+  cout << "smaple:  " << s << "   number:  " << i << "   point:  " << ap[i+(s-1)*eig] << endl;
+
+  p = sqrt(3)*(2.*ap[i+(s-1)*eig]-1.);
 
   KL1 = KL1 + p*sqrt(ev[i])*eV1[i];
   KL2 = KL2 + p*sqrt(ev[i])*eV2[i]; 
+
 }
 
 plot(Th,[KL1,KL2], wait=true, value=true);

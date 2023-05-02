@@ -1,21 +1,34 @@
 load "iovtk"
 include "getARGV.idp"
 
-int m = getARGV("-m", 10); // setting number of samples
-string weights = getARGV("-w", "");
-
-real[int] w(m);
-
-try{
-    ifstream fw(weights);
-    for(int i=0; i<m; i++) fw >> w[i];
-} catch(...) {
-    for(int i=0; i<m; i++) w[i] = 1./m;
-}
+int t = getARGV("-t", 0); // quadrature type
+int l = getARGV("-l", 1); // level
+int m = getARGV("-m", 0); // number of samples
 
 mesh Th0 = readmesh("./storage/meshes/det/mesh0.msh"); // body
 mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion 
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
+
+string file; 
+if(t==2) file = "./utils/points/SG-GL_weights_l" + l + ".txt";
+ifstream fw(file);
+
+if(!m){
+    m = -1;
+    string c;
+
+    while(1){
+        if (!fw.good()) break;
+        getline(fw, c);
+        m++;
+    }
+
+    fw.seekg(0);
+}
+
+real[int] aw(m);
+
+for(int i=0; i<m; i++) fw >> aw[i];
 
 fespace Vh1(Th, P1);
 Vh1 ESig, ESig2, VSig, sigi;
@@ -33,16 +46,18 @@ for(int i=1; i<m+1; i++){
     ifstream fvi("./storage/solutions/rand/v/v_" + i + ".txt");
     fvi >> vi[];
 
-    ESig = ESig + w[i-1]*sigi;
-    ESig2 = ESig2 + w[i-1]*sigi*sigi;
-    [Eu,Ev] = [Eu,Ev] + [w[i-1]*ui,w[i-1]*vi];
+    cout << "WEIGHT:  " << aw[i-1] << endl;
+
+    ESig = ESig + aw[i-1]*sigi;
+    ESig2 = ESig2 + aw[i-1]*sigi*sigi;
+    [Eu,Ev] = [Eu,Ev] + [aw[i-1]*ui,aw[i-1]*vi];
 }
 
 VSig = ESig2 - ESig*ESig;
 
 if(m>=8000){
-    savevtk("./exp/sig_exp_10k.vtu", Th, ESig, dataname="sig_exp_10k");
-    savevtk("./exp/sig_var_10k.vtu", Th, VSig, dataname="sig_var_10k");
+    savevtk("./exp/sig_exp_ref.vtu", Th, ESig, dataname="sig_exp_ref");
+    savevtk("./exp/sig_var_ref.vtu", Th, VSig, dataname="sig_var_ref");
 
     mesh Th0d = movemesh(Th0, [x+Eu, y+Ev]); 
     mesh Th1d = movemesh(Th1, [x+Eu, y+Ev]); 
@@ -55,8 +70,8 @@ if (m<=8) {
     savemesh(Th, "./exp/mesh.msh");
 }
 
-string feu = "./exp/u_exp_" + m + ".txt";;
-string fev = "./exp/v_exp_" + m + ".txt";
+string feu = "./exp/u_exp_" + l + ".txt";;
+string fev = "./exp/v_exp_" + l + ".txt";
 
 ofstream ffeu(feu);
 ofstream ffev(fev);
