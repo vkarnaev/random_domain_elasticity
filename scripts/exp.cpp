@@ -21,11 +21,15 @@ int main(int argc, char** argv) {
 
     string file;
     if(t==2) file = "./utils/points/SG-GL_weights_l";
-    
+
     file = file + to_string(l) + ".txt"; 
 
     ifstream inFile(file); 
-    int m = count(istreambuf_iterator<char>(inFile), istreambuf_iterator<char>(), '\n');
+
+    int m = 0;
+    ifstream in(file);
+    string unused;
+    while (getline(in, unused)) m++;
 
     int done = 0;
 
