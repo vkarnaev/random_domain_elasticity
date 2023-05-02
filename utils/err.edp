@@ -10,22 +10,28 @@ VhRef [EuRef,EvRef];
 
 fespace VhSol(ThSol, [P1,P1]);
 
-ifstream feuref("./experiments/" + folderRef + "/u_exp_10943.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_10943.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_7.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_7.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
-/*
-for(int i=1; i<7;i++){
-    real cost = 8*2^(i-1);
+
+real[int] acost = [5, 15, 89, 293, 1077, 3709];
+real cost;
+
+int m = 6;
+
+for(int i=1; i<m;i++){
+    //cost = 8*2^(i-1);
+    cost = acost[i];
 
     VhSol [Eu,Ev];
 
-    ifstream feu("./experiments/" + folderSol + "/u_exp_" + cost + ".txt");
+    ifstream feu("./experiments/" + folderSol + "/u_exp_" + i + ".txt");
     feu >> Eu[];
-    ifstream fev("./experiments/" + folderSol + "/v_exp_" + cost + ".txt");
+    ifstream fev("./experiments/" + folderSol + "/v_exp_" + i + ".txt");
     fev >> Ev[];
 
     VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
@@ -35,20 +41,3 @@ for(int i=1; i<7;i++){
     
     ferr << cost << " " << err << endl; 
 }
-*/
-
-    real cost = 293;
-
-    VhSol [Eu,Ev];
-
-    ifstream feu("./experiments/" + folderSol + "/u_exp_" + cost + ".txt");
-    feu >> Eu[];
-    ifstream fev("./experiments/" + folderSol + "/v_exp_" + cost + ".txt");
-    fev >> Ev[];
-
-    VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
-
-    //real err = sqrt(int2d(Th) (dx(erru)*dx(erru) + dx(errv)*dx(errv) + dy(erru)*dy(erru) + dy(errv)*dy(errv)));
-    real err = sqrt(int2d(ThRef) (erru*erru + errv*errv));
-    
-    ferr << cost << " " << err << endl; 
