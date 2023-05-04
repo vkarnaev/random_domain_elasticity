@@ -40,12 +40,8 @@ for(int j=0; j<m*eig; j++) fp >> ap[j];
 real p = 0.;
 
 fespace Vh(Th, P1);
-Vh[int] eV1(eig), eV2(eig), vgamma0(eig), vgamma1(eig); // eigen vectors 
+Vh[int] eV1(eig), eV2(eig); // eigen vectors 
 Vh KL1, KL2; // random deformation field
-
-real[int] gamma0(eig), gamma1(eig), gammac(eig), agamma(2);
-
-ofstream fgammac("./storage/ev/gammac.txt");
 
 real c = 0.1;
 real k = 0.;
@@ -59,13 +55,13 @@ for (int i=0; i<eig; i++){
   feV1 >> eV1[i][];
   feV2 >> eV2[i][]; // arrays of eigen vector
 
-  cout << "smaple:  " << s << "   number:  " << i << "   point:  " << ap[i+(s-1)*eig] << endl;
+  //cout << "smaple:  " << s << "   number:  " << i << "   point:  " << ap[i+(s-1)*eig] << endl;
 
-  p = sqrt(3)*(2.*ap[i+(s-1)*eig]-1.);
+  p = sqrt(3.)*(2.*ap[i+(s-1)*eig]-1.);
 
- // KL1 = KL1 + p*sqrt(ev[i])*eV1[i];
-  //KL2 = KL2 + p*sqrt(ev[i])*eV2[i]; 
-
+  KL1 = KL1 + p*sqrt(ev[i])*eV1[i];
+  KL2 = KL2 + p*sqrt(ev[i])*eV2[i]; 
+/*
   k = 1./((i+1)*(i+1));
 
   eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
@@ -73,6 +69,7 @@ for (int i=0; i<eig; i++){
 
   KL1 = KL1 + p*eV1[i];
   KL2 = KL2 + p*eV2[i];
+  */
 
 }
 
