@@ -11,6 +11,7 @@ mesh Th1 = readmesh("./storage/meshes/det/mesh1.msh"); // inculsion
 mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
 
 string file; 
+if(t==1) file = "./utils/points/points_sobol2_l" + l + ".txt";
 if(t==2) file = "./utils/points/SG-GL_points_l" + l + ".txt";
 ifstream fp(file);
 

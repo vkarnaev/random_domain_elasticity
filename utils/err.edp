@@ -1,13 +1,13 @@
 string folderSol = "sg";
-string folderRef = "sg";
-string fileErr = "sg";
+string folderRef = "hqmc";
+string fileErr = "sgvshqmc";
 
 mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
 fespace VhRef(ThRef, [P1,P1]);
 VhRef [EuRef,EvRef];
 
-ifstream feuref("./experiments/" + folderRef + "/u_exp_23.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_23.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_11.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_11.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
@@ -17,16 +17,12 @@ fespace VhSol(ThSol, [P1,P1]);
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-real[int] acost = [703, 1143, 1837, 2847, 4319, 6559];
+real[int] acost = [5, 15, 89, 293, 1077, 3709];
 real cost;
 
-int m = 23;
-int j = 0;
-
-for(int i=17; i<m;i++){
+for(int i=1; i<7;i++){
     //cost = 8*2^(i-1);
-    cost = acost[j];
-    j++;
+    cost = acost[i-1];
 
     VhSol [Eu,Ev];
 
@@ -35,8 +31,6 @@ for(int i=17; i<m;i++){
 
     feu >> Eu[];
     fev >> Ev[];
-
-    plot([Eu, Ev], wait = true);
 
     VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
 
