@@ -28,12 +28,11 @@ if(!m){
 }
 
 ifstream fev("./storage/ev/ev.txt"); // file with eigen values
-ifstream fgamma("./storage/ev/gamma.txt");
 
 real eig;
 fev  >> eig; // number of eigen values
 
-real[int] ev(eig), gamma(eig);
+real[int] ev(eig);
 
 real[int] ap(m*eig);
 for(int j=0; j<m*eig; j++) fp >> ap[j];
@@ -51,27 +50,14 @@ for (int i=0; i<eig; i++){
   ifstream feV1("./storage/ev/eV1/eV1" + i + ".txt"); 
   ifstream feV2("./storage/ev/eV2/eV2" + i + ".txt"); // files with eigen vector
 
-  fgamma >> gamma[i];
   fev >> ev[i]; // array of eigen values
   feV1 >> eV1[i][];
   feV2 >> eV2[i][]; // arrays of eigen vector
-
-  //cout << "smaple:  " << s << "   number:  " << i << "   point:  " << ap[i+(s-1)*eig] << endl;
 
   p = sqrt(3.)*(2.*ap[i+(s-1)*eig]-1.);
 
   KL1 = KL1 + p*sqrt(ev[i])*eV1[i];
   KL2 = KL2 + p*sqrt(ev[i])*eV2[i]; 
-/*
-  k = 1./((i+1)*(i+1));
-
-  eV1[i] = sqrt(ev[i])*gamma[0]*k*c*eV1[i]/gamma[i];
-  eV2[i] = sqrt(ev[i])*gamma[0]*k*c*eV2[i]/gamma[i];
-
-  KL1 = KL1 + p*eV1[i];
-  KL2 = KL2 + p*eV2[i];
-  */
-
 }
 
 plot(Th,[KL1,KL2], wait=true, value=true);

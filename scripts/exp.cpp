@@ -21,10 +21,8 @@ int main(int argc, char** argv) {
 
     string file;
     if(t==2) file = "./utils/points/SG-GL_weights_l";
-
+    else file = "./utils/points/uniform_weights_l";
     file = file + to_string(l) + ".txt"; 
-
-    ifstream inFile(file); 
 
     int m = 0;
     ifstream in(file);

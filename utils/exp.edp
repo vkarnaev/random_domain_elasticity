@@ -11,6 +11,7 @@ mesh Th = readmesh("./storage/meshes/det/mesh.msh"); // initialising mesh
 
 string file; 
 if(t==2) file = "./utils/points/SG-GL_weights_l" + l + ".txt";
+else file = "./utils/points/uniform_weights_l" + l + ".txt";
 ifstream fw(file);
 
 if(!m){
