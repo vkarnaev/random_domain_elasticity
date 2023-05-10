@@ -1,6 +1,6 @@
-string folderSol = "sg";
+string folderSol = "sobol";
 string folderRef = "sg";
-string fileErr = "sg";
+string fileErr = "sobol_vs_sg";
 
 mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
 fespace VhRef(ThRef, [P1,P1]);
@@ -20,9 +20,9 @@ ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 real[int] acost = [5, 21, 121, 447, 1649];
 real cost;
 
-for(int i=1; i<6;i++){
-    //cost = 8*2^(i-1);
-    cost = acost[i-1];
+for(int i=1; i<11;i++){
+    cost = 8*2^(i-1);
+    //cost = acost[i-1];
 
     VhSol [Eu,Ev];
 
