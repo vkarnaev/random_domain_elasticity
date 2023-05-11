@@ -38,6 +38,9 @@ fespace Vh(Th, [P1,P1]);
 Vh [Eu,Ev], [ui,vi];
 
 for(int i=1; i<m+1; i++){
+    
+    cout << "i: " << i << " w: " << aw[i-1] << endl;   
+
     ifstream fsigi("./storage/solutions/rand/sig/sig_" + i + ".txt");
     fsigi >> sigi[];
 
