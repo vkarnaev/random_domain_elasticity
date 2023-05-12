@@ -1,13 +1,13 @@
-string folderSol = "sobol";
-string folderRef = "sobol";
+string folderSol = "halton";
+string folderRef = "sg";
 string fileErr = folderSol + "_vs_" + folderRef;
 
 mesh ThRef = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
 fespace VhRef(ThRef, [P1,P1]);
 VhRef [EuRef,EvRef];
 
-ifstream feuref("./experiments/" + folderRef + "/u_exp_10.txt");
-ifstream fevref("./experiments/" + folderRef + "/v_exp_10.txt");
+ifstream feuref("./experiments/" + folderRef + "/u_exp_6.txt");
+ifstream fevref("./experiments/" + folderRef + "/v_exp_6.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
@@ -20,7 +20,7 @@ ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 real[int] acost = [5, 21, 121, 447, 1649];
 real cost;
 
-for(int i=1; i<10;i++){
+for(int i=1; i<11;i++){
     cost = 8*2^(i-1);
     //cost = acost[i-1];
 
