@@ -47,8 +47,6 @@ for(int i=1; i<m+1; i++){
     ifstream fvi("./storage/solutions/rand/v/v_" + i + ".txt");
     fvi >> vi[];
 
-    //cout << "WEIGHT:  " << aw[i-1] << endl;
-
     ESig = ESig + aw[i-1]*sigi;
     ESig2 = ESig2 + aw[i-1]*sigi*sigi;
     [Eu,Ev] = [Eu,Ev] + [aw[i-1]*ui,aw[i-1]*vi];
