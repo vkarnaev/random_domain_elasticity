@@ -17,10 +17,10 @@ fespace VhSol(ThSol, [P1,P1]);
 
 ofstream ferr("./experiments/err/err_" + fileErr + ".txt");
 
-real[int] acost = [0, 5, 21, 121, 447, 1649, 5561];
+real[int] acost = [1, 5, 21, 121, 447, 1649, 5561];
 real cost;
 
-for(int i=0; i<7;i++){
+for(int i=1; i<7;i++){
     //cost = 8*2^(i-1);
     cost = acost[i];
 
