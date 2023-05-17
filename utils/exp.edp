@@ -74,15 +74,15 @@ if(t==1) type = "sobol";
 if(t==2) type = "sg";
 if(t==3) type = "iplr2";
 
-string feu = "./exp/" + type + "/u_exp_t" + t + "_l" + l + ".txt";
-string fev = "./exp/" + type + "/v_exp_t" + t + "_l" + l + ".txt";
+string feu = "./exp/" + type + "/l" + l + "/u_exp_t" + t + "_l" + l + ".txt";
+string fev = "./exp/" + type + "/l" + l + "/v_exp_t" + t + "_l" + l + ".txt";
 
-string fvuu = "./exp/" + type + "/uu_var_t" + t + "_l" + l + ".txt";
-string fvuv = "./exp/" + type + "/uv_var_t" + t + "_l" + l + ".txt";
-string fvvv = "./exp/" + type + "/vv_var_t" + t + "_l" + l + ".txt";
+string fvuu = "./exp/" + type + "/l" + l + "/uu_var_t" + t + "_l" + l + ".txt";
+string fvuv = "./exp/" + type + "/l" + l + "/uv_var_t" + t + "_l" + l + ".txt";
+string fvvv = "./exp/" + type + "/l" + l + "/vv_var_t" + t + "_l" + l + ".txt";
 
-string fesig = "./exp/" + type + "/sig_exp_t" + t + "_l" + l + ".txt";
-string fvsig = "./exp/" + type + "/sig_var_t" + t + "_l" + l + ".txt";
+string fesig = "./exp/" + type + "/l" + l + "/sig_exp_t" + t + "_l" + l + ".txt";
+string fvsig = "./exp/" + type + "/l" + l + "/sig_var_t" + t + "_l" + l + ".txt";
 
 ofstream ffeu(feu);
 ofstream ffev(fev);
