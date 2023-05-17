@@ -29,53 +29,78 @@ if(!m){
 
 real[int] aw(m);
 
-for(int i=0; i<m; i++) fw >> aw[i];
-
 fespace Vh1(Th, P1);
-Vh1 ESig, ESig2, VSig, sigi;
+Vh1 Esig, Vsig, Vuu, Vuv, Vvv;
+Vh1[int] sig(m);
 
 fespace Vh(Th, [P1,P1]);
-Vh [Eu,Ev], [ui,vi];
+Vh [Eu, Ev];
+Vh[int] [u,v](m);
 
-for(int i=1; i<m+1; i++){
-    ifstream fsigi("./storage/solutions/rand/sig/sig_" + i + ".txt");
-    fsigi >> sigi[];
 
-    ifstream fui("./storage/solutions/rand/u/u_" + i + ".txt");
-    fui >> ui[];
 
-    ifstream fvi("./storage/solutions/rand/v/v_" + i + ".txt");
-    fvi >> vi[];
+int ii;
 
-    ESig = ESig + aw[i-1]*sigi;
-    ESig2 = ESig2 + aw[i-1]*sigi*sigi;
-    [Eu,Ev] = [Eu,Ev] + [aw[i-1]*ui,aw[i-1]*vi];
+for(int i=0; i<m; i++){
+    ii = i+1;
+
+    fw >> aw[i];
+
+    ifstream fsigi("./storage/solutions/rand/sig/sig_" + ii + ".txt");
+    fsigi >> sig[i][];
+
+    ifstream fui("./storage/solutions/rand/u/u_" + ii + ".txt");
+    fui >> u[i][];
+
+    ifstream fvi("./storage/solutions/rand/v/v_" + ii + ".txt");
+    fvi >> v[i][];
+
+    Esig = Esig + aw[i]*sig[i];
+
+    [Eu,Ev] = [Eu,Ev] + [aw[i]*u[i], aw[i]*v[i]];
 }
 
-plot([Eu,Ev], wait = 1);
+for(int i=0; i<m; i++){
+    Vsig = Vsig + aw[i]*(sig[i] - Esig)*(sig[i] - Esig);
 
-VSig = ESig2 - ESig*ESig;
-
-if(m>=8000){
-    savevtk("./exp/sig_exp_ref.vtu", Th, ESig, dataname="sig_exp_ref");
-    savevtk("./exp/sig_var_ref.vtu", Th, VSig, dataname="sig_var_ref");
-
-    mesh Th0d = movemesh(Th0, [x+Eu, y+Ev]); 
-    mesh Th1d = movemesh(Th1, [x+Eu, y+Ev]); 
-    mesh Thd =Th0d + Th1d; // body deformation
+    Vuu = Vuu + aw[i]*(u[i] - Eu)*(u[i] - Eu);
+    Vuv = Vuv + aw[i]*(u[i] - Eu)*(v[i] - Ev);
+    Vvv = Vvv + aw[i]*(v[i] - Ev)*(v[i] - Ev);
 }
 
-if (m<=8) {
-    savemesh(Th0, "./exp/mesh0.msh");
-    savemesh(Th1, "./exp/mesh1.msh");
-    savemesh(Th, "./exp/mesh.msh");
-}
+string type;
+if(t==0) type = "halton";
+if(t==1) type = "sobol";
+if(t==2) type = "sg";
+if(t==3) type = "iplr2";
 
-string feu = "./exp/u_exp_" + l + ".txt";;
-string fev = "./exp/v_exp_" + l + ".txt";
+string feu = "./exp/" + type + "/u_exp_t" + t + "_l" + l + ".txt";
+string fev = "./exp/" + type + "/v_exp_t" + t + "_l" + l + ".txt";
+
+string fvuu = "./exp/" + type + "/uu_var_t" + t + "_l" + l + ".txt";
+string fvuv = "./exp/" + type + "/uv_var_t" + t + "_l" + l + ".txt";
+string fvvv = "./exp/" + type + "/vv_var_t" + t + "_l" + l + ".txt";
+
+string fesig = "./exp/" + type + "/sig_exp_t" + t + "_l" + l + ".txt";
+string fvsig = "./exp/" + type + "/sig_var_t" + t + "_l" + l + ".txt";
 
 ofstream ffeu(feu);
 ofstream ffev(fev);
 
+ofstream ffvuu(fvuu);
+ofstream ffvuv(fvuv);
+ofstream ffvvv(fvvv);
+
+ofstream ffesig(fesig);
+ofstream ffvsig(fvsig);
+
 ffeu << Eu[];
 ffev << Ev[];
+
+ffvuu << Vuu[];
+ffvuv << Vuv[];
+ffvvv << Vvv[];
+
+ffesig << Esig[];
+ffvsig << Vsig[];
+

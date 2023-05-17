@@ -1,0 +1,117 @@
+#!/bin/bash
+
+#Halton
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 1
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 2
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 3
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 4
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 5
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 6
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 7
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 8
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 9
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 0 -l 10
+
+#Sobol
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 1
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 2
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 3
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 4
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 5
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 6
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 7
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 8
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 9
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 1 -l 10
+
+
+#Sparse Grids
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 1
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 2
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 3
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 4
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 5
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 6
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 2 -l 7
+
+#IPLR2
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 1
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 2
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 3
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 4
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 5
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 6
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 7
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 8
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 9
+
+make
+mpirun -np 40 ./exp.exe -n 128 -t 3 -l 10
