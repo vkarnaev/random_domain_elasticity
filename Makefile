@@ -29,3 +29,10 @@ init:
 	mkdir storage/solutions/rand/v
 
 	mkdir -p exp
+	mkdir -p exp/sg
+	mkdir -p exp/sobol
+	mkdir -p exp/iplr2
+	mkdir -p exp/halton
+
+
+

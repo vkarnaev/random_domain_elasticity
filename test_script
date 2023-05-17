@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#Halton
+make
+mpirun -np 8 ./exp.exe -n 16 -t 0 -l 1
+
+#Sobol
+make
+mpirun -np 8 ./exp.exe -n 16 -t 1 -l 1
+
+#Sparse Grid
+make
+mpirun -np 8 ./exp.exe -n 16 -t 2 -l 1
+
+#IPLR2
+make
+mpirun -np 8 ./exp.exe -n 16 -t 3 -l 1

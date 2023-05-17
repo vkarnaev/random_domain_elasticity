@@ -14,7 +14,7 @@ string file;
 if(t==0) file = "./utils/points/halton_points_l" + l + ".txt";
 if(t==1) file = "./utils/points/points_sobol2_l" + l + ".txt";
 if(t==2) file = "./utils/points/SG-GL_points_l" + l + ".txt";
-if(t==3) file = "./utils/points/points_iplr3_l" + l + ".txt";
+if(t==3) file = "./utils/points/points_iplr2_l" + l + ".txt";
 ifstream fp(file);
 
 if(!m){ 

@@ -34,7 +34,7 @@ func real K (real xi, real yi, real xj, real yj, int r, int s){ // Kernel functi
 
 /* PIVOTED CHOLESKY DECOMPOSTION */
 
-real tl = 1e-10;
+real tl = 1e-6;
 int stop = 102;
 
 int k = 0;
