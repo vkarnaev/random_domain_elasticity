@@ -16,9 +16,16 @@ int main(int argc, char* argv[]){
     s = 1;
   }
 
+  try {
+    s = stoi(argv[4]);
+  }
+  catch(...) {
+    s = 1;
+  }
+
   string mesh = "Freefem++ -ne -nw ./utils/mesh.edp -n " + to_string(n); // init mesh command
   string eig = "Freefem++ -ne -nw ./utils/eig.edp"; // init eig command
-  string randmesh = "Freefem++ -ne ./utils/randmesh.edp -t 0 -l 1 -s " + to_string(s); // init randmesh command
+  string randmesh = "Freefem++ -ne ./utils/randmesh.edp -t 0 -l 11 -s " + to_string(s); // init randmesh command
   string solve = "FreeFem++ -ne ./utils/solver.edp -r 1 -p 1 -s " + to_string(s); // init solve command
 
   system(mesh.c_str()); // creating mesh
