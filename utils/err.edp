@@ -1,4 +1,5 @@
 include "getARGV.idp"
+load "iovtk"
 
 int type = getARGV("-t", 0); // setting triangulation number
 
@@ -8,46 +9,103 @@ if(type==1) folder = "sobol";
 if(type==2) folder = "sg";
 if(type==3) folder = "iplr2";
 
-mesh Th = readmesh("./experiments/" + folderRef + "/mesh.msh"); // initialising reference mesh
+cout << folder << endl;
+
+mesh Th = readmesh("./experiments/solutions/mesh.msh"); // initialising reference mesh
 
 fespace Vh(Th, [P1,P1]);
-VhRef [EuRef,EvRef], [Eu,Ev];
+Vh [EuRef,EvRef], [Eu,Ev];
 
-ifstream feuref("./experiments/sg/l7/u_exp_t2_l7.txt");
-ifstream fevref("./experiments/sg/l7/v_exp_t2_l7.txt");
+fespace Vh1(Th, P1);
+Vh1 VuuRef, VuvRef, VvvRef, Vuu, Vuv, Vvv, EsigRef, Esig, VsigRef, Vsig;
+
+ifstream feuref("./experiments/solutions/sg/l7/u_exp_t2_l7.txt");
+ifstream fevref("./experiments/solutions/sg/l7/v_exp_t2_l7.txt");
+
+ifstream fvuuref("./experiments/solutions/sg/l7/uu_var_t2_l7.txt");
+ifstream fvuvref("./experiments/solutions/sg/l7/uv_var_t2_l7.txt");
+ifstream fvvvref("./experiments/solutions/sg/l7/vv_var_t2_l7.txt");
+
+ifstream fesigref("./experiments/solutions/sg/l7/sig_exp_t2_l7.txt");
+ifstream fvsigref("./experiments/solutions/sg/l7/sig_var_t2_l7.txt");
 
 feuref >> EuRef[];
 fevref >> EvRef[];
 
-mesh ThSol = readmesh("./experiments/" + folderSol + "/mesh.msh"); // initialising reference mesh
-fespace VhSol(ThSol, [P1,P1]);
+fvuuref >> VuuRef[];
+fvuvref >> VuvRef[];
+fvvvref >> VvvRef[];
 
-ofstream ferresol("./experiments/err/err_sol_exp_" + folderSol + ".txt");
-//ofstream ferrvsol("./experiments/err/err_sol_var_" + folderSol + ".txt");
+fesigref >> EsigRef[];
+fvsigref >> VsigRef[];
 
-//ofstream ferresig("./experiments/err/err_sol_exp_" + folderSol + ".txt");
-//ofstream ferrvsig("./experiments/err/err_sol_var_" + folderSol + ".txt");
+ofstream ferrEsol("./experiments/err/err_sol_exp_" + folder + ".txt");
+ofstream ferrVsol("./experiments/err/err_sol_var_" + folder + ".txt");
+
+ofstream ferrweakEsol("./experiments/err/err_weak_sol_exp_" + folder + ".txt");
+ofstream ferrweakVsol("./experiments/err/err_weak_sol_var_" + folder + ".txt");
+
+ofstream ferrEsig("./experiments/err/err_sig_exp_" + folder + ".txt");
+ofstream ferrVsig("./experiments/err/err_sig_var_" + folder + ".txt");
 
 real[int] acost = [1, 5, 21, 121, 447, 1649, 5561];
 real cost;
 
-for(int i=1; i<11;i++){
+int uplim;
+
+if(type == 2) uplim = 7;
+else uplim = 11; 
+
+for(int i=1; i<uplim;i++){
 
     if(type == 2) cost = acost[i];
     else cost = 4*2^i; 
 
-    [Eu,Ev] = [0,0];
+    ifstream feu("./experiments/solutions/" + folder + "/l" + i + "/u_exp_t" + type + "_l" + i + ".txt");
+    ifstream fev("./experiments/solutions/" + folder + "/l" + i + "/v_exp_t"+ type + "_l" + i + ".txt");
 
-    ifstream feu("./experiments/" + folderSol + "/l" + i + "/u_exp_t" + type + "_l" + i + ".txt");
-    ifstream fev("./experiments/" + folderSol + "/l" + i + "/v_exp_t"+ type + "_l" + i + ".txt");
+    ifstream fvuu("./experiments/solutions/" + folder + "/l" + i + "/uu_var_t" + type + "_l" + i + ".txt");
+    ifstream fvuv("./experiments/solutions/" + folder + "/l" + i + "/uv_var_t"+ type + "_l" + i + ".txt");
+    ifstream fvvv("./experiments/solutions/" + folder + "/l" + i + "/vv_var_t" + type + "_l" + i + ".txt");
+
+    ifstream fesig("./experiments/solutions/" + folder + "/l" + i + "/sig_exp_t"+ type + "_l" + i + ".txt");
+    ifstream fvsig("./experiments/solutions/" + folder + "/l" + i + "/sig_var_t"+ type + "_l" + i + ".txt");
 
     feu >> Eu[];
     fev >> Ev[];
 
-    VhRef [erru,errv] = [EuRef,EvRef] - [Eu,Ev];
+    fvuu >> Vuu[];
+    fvuv >> Vuv[];
+    fvvv >> Vvv[];
 
-    real err = sqrt(int2d(ThRef) (dx(erru)*dx(erru) + dx(errv)*dx(errv) + dy(erru)*dy(erru) + dy(errv)*dy(errv)));
-    //real err = sqrt(int2d(ThRef) (erru*erru + errv*errv));
+    fesig >> Esig[];
+    fvsig >> Vsig[];
+
+    Vh [errEu,errEv] = [EuRef,EvRef] - [Eu,Ev];
+
+    Vh1 errVuu = VuuRef-Vuu;
+    Vh1 errVuv = VuvRef-Vuv;
+    Vh1 errVvv = VvvRef-Vvv;
+    Vh1 errV = sqrt(errVuu*errVuu + 2.*errVuv*errVuv + errVvv*errVvv);
+
+    Vh1 errEsigfunc = EsigRef-Esig;
+    Vh1 errVsigfunc = VsigRef-Vsig;
+            
+    real errEsol = sqrt(int2d(Th) (errEu*errEu + errEv*errEv)) + sqrt(int2d(Th) (dx(errEu)*dx(errEu) + dx(errEv)*dx(errEv) + dy(errEu)*dy(errEu) + dy(errEv)*dy(errEv)));
+    real errVsol = int2d(Th) (abs(errV))+ int2d(Th) (dx(errV) + dy(errV));
+
+    real errweakEsol = sqrt(int2d(Th) (errEu*errEu + errEv*errEv));
+    real errweakVsol = int2d(Th) (abs(errV));
+
+    real errEsig = sqrt(int2d(Th) (errEsigfunc*errEsigfunc));
+    real errVsig = int2d(Th) (abs(errVsigfunc));
     
-    ferresol << cost << " " << err << endl; 
+    ferrEsol << cost << " " << errEsol << endl; 
+    ferrVsol << cost << " " << errVsol << endl; 
+
+    ferrweakEsol << cost << " " << errweakEsol << endl; 
+    ferrweakVsol << cost << " " << errweakVsol << endl; 
+
+    ferrEsig << cost << " " << errEsig << endl; 
+    ferrVsig << cost << " " << errVsig << endl; 
 }

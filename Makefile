@@ -12,22 +12,19 @@ init:
 
 	mkdir storage/meshes
 	mkdir storage/meshes/det
-	mkdir storage/meshes/def
 	mkdir storage/meshes/rand
 	mkdir storage/meshes/rand/mesh
 	mkdir storage/meshes/rand/mesh0
 	mkdir storage/meshes/rand/mesh1
 
-	mkdir storage/paraview
-
 	mkdir storage/solutions
 	mkdir storage/solutions/det
-	mkdir storage/solutions/exp
 	mkdir storage/solutions/rand
 	mkdir storage/solutions/rand/sig
 	mkdir storage/solutions/rand/u
 	mkdir storage/solutions/rand/v
 
+	rm -r exp
 	mkdir -p exp
 
 	mkdir -p exp/sg
